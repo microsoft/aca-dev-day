@@ -48,7 +48,8 @@ az containerapp env create \
   --logs-workspace-key $LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET \
   --location $LOCATION
 
-# Deploy the container-2-dotnet dotnet-app
+# Deploy the container-2-dotnet dotnet-app. Note that the ingress is internal
+# meaning you can't reach this container app from outside the environment
 az containerapp create \
   --name dotnet-app \
   --resource-group $RESOURCE_GROUP \
@@ -57,12 +58,14 @@ az containerapp create \
   --target-port 80 \
   --ingress 'internal'
 
+# Get the FQDN of THE dotnet-app
 DOTNET_FQDN=$(az containerapp show \
   --resource-group $RESOURCE_GROUP \
   --name dotnet-app \
   --query configuration.ingress.fqdn -o tsv)
 
-# Deploy the container-1-node node-app
+# Deploy the container-1-node node-app. Notice the ingress is external meaning
+# you can call this container app from outside
 az containerapp create \
   --name node-app \
   --resource-group $RESOURCE_GROUP \
@@ -70,7 +73,7 @@ az containerapp create \
   --image 'ghcr.io/azure-samples/container-apps-connect-multiple-apps/node:main' \
   --target-port 3000 \
   --ingress 'external' \
-  --environment-variables DOTNET_FQDN=$DOTNET_FQDN \
+  --env-var DOTNET_FQDN=$DOTNET_FQDN \
   --query configuration.ingress.fqdn
 ```
 
