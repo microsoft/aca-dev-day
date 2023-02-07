@@ -24,8 +24,12 @@ az login
 az extension add \
   --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl
 
-# Make sure the Microsoft.Web namespace is registered
-az provider register --namespace Microsoft.Web
+# Make sure you upgrade to the latest containerapp extention
+az extension add --name containerapp --upgrade
+# Make sure the Microsoft.App namespace is registered
+az provider register --namespace Microsoft.App
+# Register the provider for Log Analytics
+az provider register --namespace Microsoft.OperationalInsights
 
 # Create a resource group
 az group create \
