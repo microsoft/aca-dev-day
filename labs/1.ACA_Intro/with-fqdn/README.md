@@ -16,6 +16,7 @@ res.send(`${JSON.stringify(data.data)}`);
 RESOURCE_GROUP="aca-lab1-rg"
 LOCATION="eastus"
 ENVIRONMENT="lab1-env"
+LOG_WORKSPACE="logs-for-lab1"
 
 az login
 
@@ -34,11 +35,11 @@ az group create \
 # Create a log analytics workspace
 az monitor log-analytics workspace create \
   --resource-group $RESOURCE_GROUP \
-  --workspace-name $LOCATION
+  --workspace-name $LOG_WORKSPACE
 
 # Get the log analytics workspace client ID and secret to use next
-LOG_ANALYTICS_WORKSPACE_CLIENT_ID=`az monitor log-analytics workspace show --query customerId -g $RESOURCE_GROUP -n 'logs-for-lab1' --out tsv`
-LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET=`az monitor log-analytics workspace get-shared-keys --query primarySharedKey -g $RESOURCE_GROUP -n 'logs-for-lab1' --out tsv`
+LOG_ANALYTICS_WORKSPACE_CLIENT_ID=`az monitor log-analytics workspace show --query customerId -g $RESOURCE_GROUP -n $LOG_WORKSPACE --out tsv`
+LOG_ANALYTICS_WORKSPACE_CLIENT_SECRET=`az monitor log-analytics workspace get-shared-keys --query primarySharedKey -g $RESOURCE_GROUP -n $LOG_WORKSPACE --out tsv`
 
 # Create a container app environment
 az containerapp env create \
