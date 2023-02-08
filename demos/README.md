@@ -1,14 +1,7 @@
-# Project
+# Azure Container Apps - Multi-Container Communication
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
-
-As the maintainer of this project, please make a few updates:
-
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+## This lab exercise
+The purpose of this lab exercise is to teach the basics of communication between container apps, without Dapr.
 
 ## Contributing
 

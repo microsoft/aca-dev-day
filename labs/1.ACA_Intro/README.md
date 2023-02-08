@@ -1,4 +1,4 @@
-# Azure Container Apps - multi-container communication
+# Azure Container Apps - Multi-Container Communication
 
 The following sample shows how to use Azure Container Apps where one container app will call another container app within the container app environment.  This is possible both with or without [Dapr](https://dapr.io).  This lab will not include Dapr.  
 
