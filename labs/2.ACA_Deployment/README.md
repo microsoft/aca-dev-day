@@ -35,10 +35,10 @@ By the end of this process you'll have a 2-container app running in Azure Contai
 
 > Note: Remember to clean up or scale back your resources to save on compute costs. 
 
-1. Use the Azure CLI to create an Azure Service Principal, then store that principal's JSON output to a GitHub secret so the GitHub Actions CI/CD process can log into your Azure subscription and deploy the code.
+1. Use the Azure CLI to create an Azure Service Principal, then store that principal's JSON output to a GitHub secret so the GitHub Actions CI/CD process can log into your Azure subscription and deploy the code. **NOTE:This step is only needed if you are deploying via Github Actions**
 2. Edit the ` deploy.yml` workflow file and push the changes into a new `deploy` branch, triggering GitHub Actions to build the .NET projects into containers and push those containers into a new Azure Container Apps Environment. 
 
-## Authenticate to Azure and configure the repository with a secret
+## OPTION 1: Authenticate to Azure and configure the repository with a secret
 
 1. Fork this repository to your own GitHub organization. You need to fork the repository otherwise you will be overwriting code in the main student repository.
 2. Create an Azure Service Principal using the Azure CLI. The Azure Service Principal will be used by the Github Action to install resources into your Azure environment.
@@ -83,15 +83,15 @@ Provide a custom resource group name for the app, and then commit the change to 
 
 ![Pushing a change to the deploy branch to trigger a build.](docs/media/resource-group.png)
 
-Click on the 'Commit Changes' button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
+Click on the **'Commit Changes'** button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
 
 ![CI/CD process beginning.](docs/media/build-started.png)
 
 When you click into the workflow, you'll see that there are 3 phases the CI/CD will run through:
 
-1. provision - the Azure resources will be created that eventually house your app.
-2. build - the various .NET projects are build into containers and published into the Azure Container Registry instance created during provision.
-3. deploy - once `build` completes, the images are in ACR, so the Azure Container Apps are updated to host the newly-published container images. 
+1. `provision` - the Azure resources will be created that eventually house your app.
+2. `build` - the various .NET projects are build into containers and published into the Azure Container Registry instance created during provision.
+3. `deploy` - once `build` completes, the images are in ACR, so the Azure Container Apps are updated to host the newly-published container images. 
 
 ![CI/CD process running.](docs/media/build-running.png)After a few minutes, all three steps in the workflow will be completed, and each box in the workflow diagram will reflect success. If anything fails, you can click into the individual process step to see the detailed log output. 
 
@@ -100,7 +100,14 @@ When you click into the workflow, you'll see that there are 3 phases the CI/CD w
 ![CI/CD process succeeded.](docs/media/all-green.png)
 
 With the projects deployed to Azure, you can now test the app to make sure it works. 
+## Deploy via Bicep
+The Github Actions from Option 1 calls the main.bicep file in the Azure folder. If you aren't using Github Actions though, you still need to understand how to perform the deployment with Bicep. **If you have already performed the deployment with Github Actions, skip this section.**
 
+1. The Linux VM you are using in the Azure portal already has the Azure CLI installed, and therefore has the Bicep tools installed. However, you may want to make sure you have the lastest version of Bicep installed by running the following command in your Cloud Shell window.
+```bash
+az bicep upgrade
+```
+2. By now, you should have cloned the complete respository for the labs from 
 ## Quick look at the code
 
 This code is the result of the [Add feature flags to an ASP.NET Core](https://docs.microsoft.com/azure/azure-app-configuration/quickstart-feature-flag-aspnet-core?tabs=core6x%2Ccore5x) app article, which goes a bit more in-depth into the features of Azure App Configuration, so do check those resources out for more information later. For now, take note that there's one change in this repository's code from the original sample code. In `BetaController`, the code from the original sample uses the `FeatureGate` attribute to disable a controller's action in the case that the feature is disabled. In this repository's code, that attribute has been commented out. 
