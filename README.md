@@ -1,14 +1,8 @@
-# Project
+# Azure Container Apps Dev Day Labs
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+**IMPORTANT**: You need to follow the steps in the setup.md file before you start the first lab.
 
-As the maintainer of this project, please make a few updates:
-
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+Each folder above has its own README.md file for the individual lab. Just click on the folder to go to the lab that you want to review.
 
 ## Contributing
 
