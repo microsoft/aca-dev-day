@@ -40,11 +40,13 @@ By the end of this process you'll have a 2-container app running in Azure Contai
 
 ## Authenticate to Azure and configure the repository with a secret
 
-1. Fork this repository to your own GitHub organization.
-2. Create an Azure Service Principal using the Azure CLI. 
+1. Fork this repository to your own GitHub organization. You need to fork the repository otherwise you will be overwriting code in the main student repository.
+2. Create an Azure Service Principal using the Azure CLI. The Azure Service Principal will be used by the Github Action to install resources into your Azure environment.
+
+From within Cloud Shell:
 
 ```bash
-$subscriptionId=$(az account show --query id --output tsv)
+subscriptionId=$(az account show --query id --output tsv)
 az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor --scopes /subscriptions/$subscriptionId
 ```
 
@@ -73,15 +75,15 @@ az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor
 
 ## Deploy the code using GitHub Actions
 
-The easiest way to deploy the code is to make a commit directly to the `deploy` branch. Do this by navigating to the `deploy.yml` file in your browser and clicking the `Edit` button. 
+The easiest way to deploy the code is to make a commit directly to the `main` branch. Navigate to the `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. 
 
-![Editing the deploy file.](docs/media/edit-deploy.png)
+![Editing the deploy file.](docs/media/edit-button.png)
 
-Provide a custom resource group name for the app, and then commit the change to a new branch named `deploy`. 
+Provide a custom resource group name for the app, and then commit the change to the 'main' branch. 
 
-![Pushing a change to the deploy branch to trigger a build.](docs/media/edited-file.png)
+![Pushing a change to the deploy branch to trigger a build.](docs/media/resource-group.png)
 
-Once you click the `Propose changes` button, you'll be in "create a pull request" mode. Don't worry about creating the pull request yet, just click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
+Click on the 'Commit Changes' button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
 
 ![CI/CD process beginning.](docs/media/build-started.png)
 
