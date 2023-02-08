@@ -9,16 +9,25 @@ var data = await axios.get(`http://${dotnetFQDN}`);
 res.send(`${JSON.stringify(data.data)}`);
 ```
 
-## Deploy with CLI
+## Deploy with the Azure CLI
 
 ```bash
 # Login to the CLI
-RESOURCE_GROUP="aca-lab1-rg"
+RESOURCE_GROUP="<resource-group-name-from-setup.md>"
 LOCATION="eastus"
 ENVIRONMENT="lab1-env"
 LOG_WORKSPACE="logs-for-lab1"
+SUBSCRIPTION_ID="<your-Azure-subscription-id>"
 
+# If you are using Cloud Shell, you don't need to log in to Azure,
+# Cloud Shell automatically logs you in. Skip this step when using Cloud
+# Shell
 az login
+
+# Although you may be logged in, if the login is associated with multiple
+# Azure subscriptions, the Cloud Shell window won't know which subscription to
+# use. Set the account you are going to use
+az account set --subscription $SUBSCRIPTION_ID
 
 # Add the container apps extension
 az extension add \
@@ -63,7 +72,8 @@ az containerapp create \
   --target-port 80 \
   --ingress 'internal'
 
-# Get the FQDN of THE dotnet-app
+# Get the FQDN of THE dotnet-app so that the Node
+# front end knows where to call
 DOTNET_FQDN=$(az containerapp show \
   --resource-group $RESOURCE_GROUP \
   --name dotnet-app \

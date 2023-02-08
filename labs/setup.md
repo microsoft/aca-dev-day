@@ -27,7 +27,7 @@ In this exercise you log into your Azure Subscription and launch the Bash [Azure
 ## Task 2: Create an Azure Container Registry
 In this task you will create an Azure Container Registry and later you will use this registry to pull container images from.
 
-1. First, generate a unique name and create a resource group to organize the resources we will create in the Lab.  An Azure resource group is a logical container into which Azure resources are deployed and managed.
+1. First, generate a unique name and create a resource group to organize the resources we will create in the Lab.  An Azure resource group is a logical container into which Azure resources are deployed and managed. You may want to write down the name of the resource group after its created so you can use it later.
 
     ```bash
     aca_name="acadevday"$RANDOM
