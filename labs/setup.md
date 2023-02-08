@@ -54,9 +54,12 @@ In this task you will create an Azure Container Registry and later you will use 
 
 ## Task 3: Clone the Git repository into your Cloud Shell environment
 
-Within your Cloud Shell window, running the following command:
+Within your Cloud Shell window, running the following command in order to pull down the source code for the labs:
 ```bash
     git clone https://github.com/microsoft/aca-dev-day.git
     ls
 ```
-You should see an **aca-dev-day** folder in your Cloud Shell window.
+You should see an **aca-dev-day** folder in your Cloud Shell window. Change to the labs folder:
+```bash
+    cd aca-dev-day/labs
+```
