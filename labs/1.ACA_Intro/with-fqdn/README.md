@@ -77,7 +77,7 @@ az containerapp create \
 DOTNET_FQDN=$(az containerapp show \
   --resource-group $RESOURCE_GROUP \
   --name dotnet-app \
-  --query configuration.ingress.fqdn -o tsv)
+  --query properties.configuration.ingress.fqdn -o tsv)
 
 # Deploy the container-1-node node-app. Notice the ingress is external meaning
 # you can call this container app from outside
