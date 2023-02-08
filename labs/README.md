@@ -1,9 +1,8 @@
-# Azure Container Apps Dev Day
+# Azure Container Apps Dev Day Labs
 
-The Azure Container Apps Dev Day labs include:
-1. A lab that covers basic communication between services without Dapr
-2. A lab that covers deploying an Azure Container Apps environment using Github Actions
-3. A lab that covers communication between services using Dapr
+**IMPORTANT**: You need to follow the steps in the setup.md file before you start the first lab.
+
+Each folder above has its own README.md file for the individual lab. Just click on the folder to go to the lab that you want to review.
 
 ## Contributing
 
