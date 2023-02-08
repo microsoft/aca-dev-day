@@ -1,5 +1,3 @@
-# Azure Container Apps Dev Day Labs
-
 # Azure Container Apps Dev Day
 
 The Azure Container Apps Dev Day labs include:
