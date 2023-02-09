@@ -1,4 +1,5 @@
 param location string = resourceGroup().location
+param repositoryImage string
 
 // create the azure container registry
 resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
@@ -59,6 +60,7 @@ module frontend 'container_app.bicep' = {
   name: 'frontend'
   params: {
     name: 'frontend'
+    repositoryImage: repositoryImage
     location: location
     registryPassword: acr.listCredentials().passwords[0].value
     registryUsername: acr.listCredentials().username

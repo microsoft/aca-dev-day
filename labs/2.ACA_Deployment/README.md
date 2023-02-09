@@ -35,7 +35,7 @@ By the end of this process you'll have a 2-container app running in Azure Contai
 
 > Note: Remember to clean up or scale back your resources to save on compute costs. 
 
-1. Use the Azure CLI to create an Azure Service Principal, then store that principal's JSON output to a GitHub secret so the GitHub Actions CI/CD process can log into your Azure subscription and deploy the code. **NOTE:This step is only needed if you are deploying via Github Actions**
+1. Use the Azure CLI to create an Azure Service Principal, then store that principal's JSON output to a GitHub secret so the GitHub Actions CI/CD process can log into your Azure subscription and deploy the code. **NOTE: This step is only needed if you are deploying via Github Actions**
 2. Edit the ` deploy.yml` workflow file and push the changes into a new `deploy` branch, triggering GitHub Actions to build the .NET projects into containers and push those containers into a new Azure Container Apps Environment. 
 
 ## OPTION 1: Authenticate to Azure and configure the repository with a secret
@@ -100,15 +100,36 @@ When you click into the workflow, you'll see that there are 3 phases the CI/CD w
 ![CI/CD process succeeded.](docs/media/all-green.png)
 
 With the projects deployed to Azure, you can now test the app to make sure it works. 
-## Deploy via Bicep
+## Option 2: Deploy via Bicep
 The Github Actions from Option 1 calls the main.bicep file in the Azure folder. If you aren't using Github Actions though, you still need to understand how to perform the deployment with Bicep. **If you have already performed the deployment with Github Actions, skip this section.**
 
 1. The Linux VM you are using in the Azure portal already has the Azure CLI installed, and therefore has the Bicep tools installed. However, you may want to make sure you have the lastest version of Bicep installed by running the following command in your Cloud Shell window.
 ```bash
 az bicep upgrade
 ```
-2. By now, you should have cloned the complete respository for the labs from 
-## Quick look at the code
+2. By now, you should have cloned the complete respository for the labs from git clone https://github.com/microsoft/aca-dev-day.git. If not, clone it now in your Cloud Shell environment.
+3. From within Cloud Shell, go to the folder `/aca-dev-day/labs/2.ACA_Deployment/Azure`.
+4. The first thing we need to do is create a resource group in the Azure subscription. Run the following code in the Cloud Shell window. You can decide the name of your resource group and location, ie, like `eastus`.
+
+```bash
+RESOURCE_GROUP="<your-resource-group-name>"
+LOCATION="eastus"
+SUBSCRIPTION_ID="<your-Azure-subscription-id>"
+
+az account set --subscription $SUBSCRIPTION_ID
+
+az group create \
+  --name $RESOURCE_GROUP \
+  --location $LOCATION
+```
+
+5. Once you have confirmed that the resource group has been created in (via the Azure Portal), run this command in the Cloud Shell prompt.
+```bash
+az deployment group create --resource-group $RESOURCE_GROUP --template-file main.bicep
+```
+Notice that this command create a `deployment` using the Bicep file as a template for what to create in the deployment. The deployment process will take several minutes. Take a break!
+
+## Taking a quick look at the source code
 
 This code is the result of the [Add feature flags to an ASP.NET Core](https://docs.microsoft.com/azure/azure-app-configuration/quickstart-feature-flag-aspnet-core?tabs=core6x%2Ccore5x) app article, which goes a bit more in-depth into the features of Azure App Configuration, so do check those resources out for more information later. For now, take note that there's one change in this repository's code from the original sample code. In `BetaController`, the code from the original sample uses the `FeatureGate` attribute to disable a controller's action in the case that the feature is disabled. In this repository's code, that attribute has been commented out. 
 
@@ -174,7 +195,7 @@ In the Azure App Configuration blade, however, you'll see that the `RevisionLabe
 
 ## Try the app in Azure
 
-The `deploy` CI/CD process creates a series of resources in your Azure subscription. These are used primarily for hosting the project code, but there's also a few additional resources that aid with monitoring and observing how the app is running in the deployed environment. 
+The `deploy` CI/CD process (and the Bicep process) creates a series of resources in your Azure subscription. These are used primarily for hosting the project code, but there's also a few additional resources that aid with monitoring and observing how the app is running in the deployed environment. 
 
 | Resource          | Resource Type                    | Purpose                                                      |
 | ----------------- | -------------------------------- | ------------------------------------------------------------ |
@@ -187,7 +208,7 @@ The `deploy` CI/CD process creates a series of resources in your Azure subscript
 
 Once the application code is deployed, the Azure resource group into which it is deployed looks something like this. 
 
-![Azure resources once the CI/CD process is complete.](docs/media/feature-flags-resources.png)
+![Azure resources once the deployment process is complete.](docs/media/resources.png)
 
 ## Add a revision that enables the Beta feature
 
