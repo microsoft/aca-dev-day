@@ -1,7 +1,7 @@
 param name string
 param location string = resourceGroup().location
 param containerAppEnvironmentId string
-param repositoryImage string
+param repositoryImage string  = 'lwazuredocker/frontend:v1'
 param envVars array = []
 param registry string
 param minReplicas int = 1
