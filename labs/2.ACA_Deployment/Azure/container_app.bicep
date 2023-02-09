@@ -1,7 +1,6 @@
 param name string
 param location string = resourceGroup().location
 param containerAppEnvironmentId string
-param containerPort int
 param repositoryImage string
 param envVars array = []
 param registry string
