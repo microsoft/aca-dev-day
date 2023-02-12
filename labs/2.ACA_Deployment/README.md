@@ -249,4 +249,3 @@ This sample shows you how you can couple the awesome programmatic features and e
 
 > Note: Remember to clean up or scale back your resources to save on compute costs. 
 
-Happy coding!
