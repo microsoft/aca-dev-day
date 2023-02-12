@@ -129,6 +129,9 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file main
 ```
 Notice that this command create a `deployment` using the Bicep file as a template for what to create in the deployment. The deployment process will take several minutes. Take a break!
 
+## Did you succeed in deploying the ACA application to Azure?
+The objective of this lab was to deploy the ACA application to Azure. If you are able to click on the `frontend` Azure Container App and see a web page, then you have succeeded. The rest of the lab is just more experimentation with ASP.Net Feature flags and revisioning with ACA.
+
 ## Taking a quick look at the source code
 
 This code is the result of the [Add feature flags to an ASP.NET Core](https://docs.microsoft.com/azure/azure-app-configuration/quickstart-feature-flag-aspnet-core?tabs=core6x%2Ccore5x) app article, which goes a bit more in-depth into the features of Azure App Configuration, so do check those resources out for more information later. For now, take note that there's one change in this repository's code from the original sample code. In `BetaController`, the code from the original sample uses the `FeatureGate` attribute to disable a controller's action in the case that the feature is disabled. In this repository's code, that attribute has been commented out. 
