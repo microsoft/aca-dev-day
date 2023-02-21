@@ -35,13 +35,10 @@ By the end of this process you'll have a 2-container app running in Azure Contai
 
 > Note: Remember to clean up or scale back your resources to save on compute costs. 
 
-1. Use the Azure CLI to create an Azure Service Principal, then store that principal's JSON output to a GitHub secret so the GitHub Actions CI/CD process can log into your Azure subscription and deploy the code. **NOTE: This step is only needed if you are deploying via Github Actions**
-2. Edit the ` deploy.yml` workflow file and push the changes into a new `deploy` branch, triggering GitHub Actions to build the .NET projects into containers and push those containers into a new Azure Container Apps Environment. 
-
 ## OPTION 1: Authenticate to Azure and configure the repository with a secret
 
 1. Fork this repository to your own GitHub organization. You need to fork the repository otherwise you will be overwriting code in the main student repository.
-2. Create an Azure Service Principal using the Azure CLI. The Azure Service Principal will be used by the Github Action to install resources into your Azure environment.
+2. Create an Azure Service Principal using the Azure CLI. The Azure Service Principal will be used by the Github Action to install resources into your Azure environment. **NOTE: This step is only needed if you are deploying via Github Actions**
 
 From within Cloud Shell:
 

@@ -22,7 +22,7 @@ res.send(`${JSON.stringify(data.data)}`);
 Run the following code from your Cloud Shell environment.
 ```bash
 # Setup your parameters
-RESOURCE_GROUP="<resource-group-name-from-setup.md>"
+RESOURCE_GROUP="<resource-group-name>"
 LOCATION="eastus"
 ENVIRONMENT="lab1-env"
 LOG_WORKSPACE="logs-for-lab1"
@@ -91,7 +91,9 @@ DOTNET_FQDN=$(az containerapp show \
   --query properties.configuration.ingress.fqdn -o tsv)
 
 # Deploy the container-1-node node-app. Notice the ingress is external meaning
-# you can call this container app from outside
+# you can call this container app from outside. Note that although this last 
+# command may run quickly in the Cloud Shell, it may still take a few minutes
+# before you can hit the front-end endpoint
 az containerapp create \
   --name node-app \
   --resource-group $RESOURCE_GROUP \
