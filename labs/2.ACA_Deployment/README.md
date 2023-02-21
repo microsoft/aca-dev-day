@@ -72,7 +72,7 @@ az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor
 
 ## Deploy the code using GitHub Actions
 
-The easiest way to deploy the code is to make a commit directly to the `main` branch. Navigate to the `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. 
+The easiest way to deploy the code is to make a commit directly to the `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. 
 
 ![Editing the deploy file.](docs/media/edit-button.png)
 
@@ -81,6 +81,8 @@ Provide a custom resource group name for the app, and then commit the change to 
 ![Pushing a change to the deploy branch to trigger a build.](docs/media/resource-group.png)
 
 Click on the **'Commit Changes'** button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
+>NOTE: Some users have noticed that the first time they clicked on the Actions tab, they were required to approve that workflows can run. If you see this, the workflow will not run that you just submitted. You need to go back and modify the deploy.yaml file (change resource group name) and commit the changes again.
+
 
 ![CI/CD process beginning.](docs/media/build-started.png)
 
