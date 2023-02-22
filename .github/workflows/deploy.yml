@@ -13,7 +13,7 @@ env:
   # specify your preferred region
   REGION: eastus
 
-  FRONTEND_DOCKER: FeatureFlagsWithContainerApps/Dockerfile
+  FRONTEND_DOCKER: labs/2.ACA_Deployment/FeatureFlagsWithContainerApps/Dockerfile
   FRONTEND_IMAGE: frontend
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
         inlineScript: >
           echo "Creating resources"
 
-          az deployment group create --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file './labs/2.ACA_Deployment/Azure/main.bicep' --debug
+          az deployment group create --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file 'labs/2.ACA_Deployment/Azure/main.bicep' --debug
 
   build:
     runs-on: ubuntu-latest
