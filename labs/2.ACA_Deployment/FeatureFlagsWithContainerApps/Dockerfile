@@ -6,7 +6,7 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["FeatureFlagsWithContainerApps/FeatureFlagsWithContainerApps.csproj", "FeatureFlagsWithContainerApps/"]
+COPY ["labs/2.ACA_Deployment/FeatureFlagsWithContainerApps/FeatureFlagsWithContainerApps.csproj", "FeatureFlagsWithContainerApps/"]
 RUN dotnet restore "FeatureFlagsWithContainerApps/FeatureFlagsWithContainerApps.csproj"
 COPY . .
 WORKDIR "/src/FeatureFlagsWithContainerApps"
