@@ -32,13 +32,15 @@ You'll need an Azure subscription and a very small set of tools and skills to ge
 
 ## Setup
 
-By the end of this lab you'll have a single container app that has two containers running inside of it, with a few supporting resources and an App Configuration instance, which you can use to bifurcate feature settings by revision labels. 
+By the end of this lab you'll have a single container app that has two revisions in which you can divide the load and do A/B testing. You will also have a few supporting resources and an App Configuration instance, which you can use to bifurcate feature settings by revision labels. 
 
 > Note: Remember to clean up or scale back your resources to save on compute costs. 
 
 1. Fork this repository (https://github.com/Azure-Samples/dotNET-Frontend-AB-Testing-on-Azure-Container-Apps) to your own GitHub organization. 
 
-## OPTION 1: Authenticate to Azure and configure the repository with a secret
+## OPTION 1: Deploy via GitHub Actions
+
+**Authenticate to Azure and configure the repository with a secret**
 
 
 1. Create an Azure Service Principal using the Azure CLI. The Azure Service Principal will be used by the Github Action to install resources into your Azure environment. **NOTE: This step is only needed if you are deploying via Github Actions**
@@ -52,7 +54,7 @@ subscriptionId=$(az account show --query id --output tsv)
 az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor --scopes /subscriptions/$subscriptionId
 ```
 
-3. Copy the JSON written to the screen to your clipboard. 
+2. Copy the JSON written to the screen to your clipboard. 
 
 ```json
 {
@@ -69,31 +71,29 @@ az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor
 }
 ```
 
-4. Create a new GitHub secret in your forked repository named **`AzureSPN`**. Select **`Settings | Secrets and variables | Actions`** and paste the JSON returned from the previous Azure CLI output into this new secret. Once you've done this you'll see the secret in your fork of the repository.
+3. Create a new GitHub secret in your forked repository named **`AzureSPN`**. Select **`Settings | Secrets and variables | Actions`** and paste the JSON returned from the previous Azure CLI output into this new secret. Once you've done this you'll see the secret in your fork of the repository.
 
    ![The AzureSPN secret in GitHub](docs/media/secrets.png)
 
 > Note: Never save the JSON to disk, for it will enable anyone who obtains this JSON code to create or edit resources in your Azure subscription. 
 
-## Deploy the code using GitHub Actions
-
-1. You need to make sure your repository is prepared to run workflows. Click on the `Actions` menu item and then select the `I understand my workflows, go ahead and enable them` button. If you do not see this button, your workflows are probably already enabled.
+4. You need to make sure your repository is prepared to run workflows. Click on the `Actions` menu item and then select the `I understand my workflows, go ahead and enable them` button. If you do not see this button, your workflows are probably already enabled.
 
 ![Providing Workflow permission.](docs/media/workflowok.png)
 
-2. The easiest way to deploy the code is to make a commit directly to your `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. **TIP: Make sure your resource group name only contains alpha-numeric characters, no hypens or special characters.**
+5. The easiest way to deploy the code is to make a commit directly to your `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. **TIP: Make sure your resource group name only contains alpha-numeric characters, no hypens or special characters.**
 
 ![Editing the deploy file.](docs/media/edit-button.png)
 
-3. Change the name of the branch to `main` and provide a custom resource group name for the app, and then commit the change to the `main` branch. 
+6. Change the name of the branch to `main` and provide a custom resource group name for the app, and then commit the change to the `main` branch. 
 
 ![Pushing a change to the deploy branch to trigger a build.](docs/media/resource-group.png)
 
-4. Scroll farther down in the `deploy.yaml` file to line 48. Change the `'az deployment...'` command line to :
+7. Scroll farther down in the `deploy.yaml` file to line 48. Change the `'az deployment...'` command line to :
 ```bash
 az deployment group create --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file './Azure/main.bicep' --debug
 ```
-5. Click on the **`Start Commit`** button and then on the **'Commit Changes'** button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
+8. Click on the **`Start Commit`** button and then on the **'Commit Changes'** button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
 >NOTE: Some users have noticed that the first time they clicked on the Actions tab, they were required to approve that workflows can run. If you see this, the workflow will not run that you just submitted. You need to go back and modify the deploy.yaml file (change resource group name) and commit the changes again.
 
 
@@ -113,15 +113,15 @@ When you click into the workflow, you'll see that there are 3 phases the CI/CD w
 
 With the projects deployed to Azure, you can now test the app to make sure it works. 
 ## Option 2: Deploy via Bicep
-The Github Actions from Option 1 calls the main.bicep file in the Azure folder. If you aren't using Github Actions though, you still need to understand how to perform the deployment with Bicep. **If you have already performed the deployment with Github Actions, skip this section.**
+The Github Actions from Option 1 calls the `main.bicep` file in the Azure folder. If you aren't using Github Actions though, you still need to understand how to perform the deployment with Bicep. **If you have already performed the deployment with Github Actions, skip this section.**
 
 1. The Linux VM you are using in the Azure portal already has the Azure CLI installed, and therefore has the Bicep tools installed. However, you may want to make sure you have the lastest version of Bicep installed by running the following command in your Cloud Shell window.
 ```bash
 az bicep upgrade
 ```
-2. By now, you should have cloned the complete respository for the labs from git clone https://github.com/microsoft/aca-dev-day.git. If not, clone it now in your Cloud Shell environment.
-3. From within Cloud Shell, go to the folder `/aca-dev-day/labs/2.ACA_Deployment/Azure`.
-4. The first thing we need to do is create a resource group in the Azure subscription. Run the following code in the Cloud Shell window. You can decide the name of your resource group and location, ie, like `eastus`.
+2. By now, you should have forked the repository over to your own GitHub account. In the Cloud Shell window, clone your repo by doing `'git clone your-repo-name'.git`.
+3. From within Cloud Shell, go to the folder `/dotNET-Frontend-AB-Testing-on-Azure-Container-Apps/Azure`.
+4. The first thing we need to do is create a resource group in the Azure subscription. Run the following code in the Cloud Shell window. You can decide the name of your resource group and location, ie, like `eastus`. **TIP: Make sure your resource group name is alpha-numeric characters only**
 
 ```bash
 RESOURCE_GROUP="<your-resource-group-name>"
@@ -135,7 +135,10 @@ az group create \
   --location $LOCATION
 ```
 
-5. Once you have confirmed that the resource group has been created in (via the Azure Portal), run this command in the Cloud Shell prompt.
+5. Open the file `container_app.bicep` using the Cloud Shell editor.
+6. On line 4, change the repositoryImage value to `'lwazuredocker/frontend:v1'`. Save the file in the editor and close the file.
+
+7. Once you have confirmed that the resource group has been created in (via the Azure Portal), run this command in the Cloud Shell prompt.
 ```bash
 az deployment group create --resource-group $RESOURCE_GROUP --template-file main.bicep
 ```
@@ -231,7 +234,7 @@ From looking at the code, you know that setting the `RevisionLabel` environment 
 
 ![Initial revision map.](docs/media/starting-revisions.png)
 
-The one receiving 0% of the traffic is the original image - the ACA Welcome Image - that's deployed when the container apps are first created. You can uncheck that one and save it, resulting in there being 1 active revision. The one receiving 100% of the traffic is our actual app's image. 
+The one receiving 0% of the traffic is the original image - the ACA Welcome Image - that's deployed when the container apps are first created. You can uncheck that one and save it, resulting in there being 1 active revision. The one receiving 100% of the traffic is our actual app's image. NOTE: If you performed your deployment via Bicep (Option 2), you will only see 1 revision.
 
 1. Click the `Create new revision` button, and create a new revision. But this time, change the `RevisionLabel` value to be `BetaEnabled` instead of the default. Also, it'd be a good idea to give this new revision a logical suffix name. This way you know this is the one with the feature flag turned `on`. **DON'T** click the `Create` button yet!
 
