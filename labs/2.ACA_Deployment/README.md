@@ -234,7 +234,7 @@ Now, about half of the requests to the app result in an additional menu item bei
 
 ## Monitoring
 
-As site visitors are shown the beta menu item, events are recorded, and when the page resulting on their click is loaded, a separate event is recorded. Since each event is recorded individually by Application Insights, you have a snapshot of the distribution of opportunities to how many successful requests are made as a result of the menu item. 
+As site visitors are shown the beta menu item, events are recorded, and when the page resulting on their click is loaded, a separate event is recorded. Since each event is recorded individually by Application Insights. You have a snapshot of the distribution of opportunities to how many successful requests are made as a result of the menu item. 
 
 ![Default events snapshot.](docs/media/default-snapshot.png)
 
