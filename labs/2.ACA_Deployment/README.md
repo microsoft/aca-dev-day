@@ -81,11 +81,11 @@ az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor
 
 ![Providing Workflow permission.](docs/media/workflowok.png)
 
-5. The easiest way to deploy the code is to make a commit directly to your `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. **TIP: Make sure your resource group name only contains alpha-numeric characters, no hypens or special characters.**
+5. The easiest way to deploy the code is to make a commit directly to your `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. 
 
 ![Editing the deploy file.](docs/media/edit-button.png)
 
-6. Change the name of the branch to `main` and provide a custom resource group name for the app, and then commit the change to the `main` branch. 
+6. Change the name of the branch to **`main`** and provide a custom resource group name for the app, and then commit the change to the `main` branch. **TIP: Make sure your resource group name only has alpha numeric characters**
 
 ![Pushing a change to the deploy branch to trigger a build.](docs/media/resource-group.png)
 
