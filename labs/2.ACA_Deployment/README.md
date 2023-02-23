@@ -1,6 +1,8 @@
 # A/B Testing your ASP.NET Core apps using Azure Container Apps
 
-This repository contains sample code on how to host a set of revisions for your application that have slight differences, useful for performing A/B tests on your site to see how users will respond to changes gradually. You can use Azure App Configuration to create feature flags, then the ASP.NET Core feature flags extensions to change how your app will look or operate when features are enabled or disabled. With Azure Container Apps, you can create multiple revisions for each of your apps. When you put these pieces together, you can ship incremental features and bifurcate traffic so you understand how the changes will impact the app's usability before committing to the change. Then, if you find the change isn't delivering the desired impact for your customers, you can easily scale the "beta" revision back out again. 
+This lab exercise will have you use code from an Azure sample repository. The repository contains sample code on how to host a set of revisions for your application that have slight differences, which is useful for performing A/B tests on your site to see how users will respond to changes gradually. You will use Azure App Configuration to create feature flags, then the ASP.NET Core feature flags extensions to change how your app will look or operate when features are enabled or disabled. 
+
+With Azure Container Apps, you can create multiple revisions for each of your apps. When you put these pieces together, you can ship incremental features and bifurcate traffic so you understand how the changes will impact the app's usability before committing to the change. Then, if you find the change isn't delivering the desired impact for your customers, you can easily scale the "beta" revision back out again. 
 
 * **Frontend** - A front-end web app written using ASP.NET Core Blazor Server. This web app is decorated with feature flags 
 * **Monitoring** - A shared project that makes it simple to configure a .NET project with Application Insights monitoring. 
@@ -8,12 +10,11 @@ This repository contains sample code on how to host a set of revisions for your 
 
 ## What you'll learn
 
-This exercise will introduce you to a variety of concepts, with links to supporting documentation throughout the tutorial. 
+The primary purpose of this lab is for you to learn how to deploy a Container App application and environment via GitHub Actions or Bicep. As an addition benefit, this exercise will introduce you to a variety of concepts, with links to supporting documentation throughout the tutorial. 
 
 * [Azure Container Apps](https://docs.microsoft.com/azure/container-apps/overview) for hosting your app's container images. 
 * [GitHub Actions](https://github.com/features/actions) for creating CI/CD workflows to deploy your apps to Azure.
 * [Azure Container Registry](https://docs.microsoft.com/azure/container-registry/)
-* [Azure Bicep](https://docs.microsoft.com/azure/azure-resource-manager/bicep/overview?tabs=**bicep**) for creating and configuring Azure resources.
 * [Azure App Configuration](https://docs.microsoft.com/azure/azure-app-configuration/overview) for setting up feature flags to control the A/B test variance.
 * [Kusto](https://docs.microsoft.com/azure/data-explorer/kusto/query/) for building custom queries against the events your A/B tests generate.
 * [ASP.NET Core feature flags](https://docs.microsoft.com/azure/azure-app-configuration/use-feature-flags-dotnet-core?tabs=core5x), useful for when you want to test new features or bifurcate functionality for A/B tests.
@@ -23,7 +24,7 @@ This exercise will introduce you to a variety of concepts, with links to support
 You'll need an Azure subscription and a very small set of tools and skills to get started:
 
 1. An Azure subscription. Sign up [for free](https://azure.microsoft.com/free/).
-2. A GitHub account, with access to GitHub Actions.
+2. A GitHub account, with access to GitHub Actions. 
 
 ## Topology diagram
 
@@ -31,19 +32,23 @@ You'll need an Azure subscription and a very small set of tools and skills to ge
 
 ## Setup
 
-By the end of this process you'll have a 2-container app running in Azure Container Apps, with a few supporting resources and an App Configuration instance, which you can use to bifurcate feature settings by revision labels. 
+By the end of this lab you'll have a single container app that has two containers running inside of it, with a few supporting resources and an App Configuration instance, which you can use to bifurcate feature settings by revision labels. 
 
 > Note: Remember to clean up or scale back your resources to save on compute costs. 
 
+1. Fork this repository (https://github.com/Azure-Samples/dotNET-Frontend-AB-Testing-on-Azure-Container-Apps) to your own GitHub organization. 
+
 ## OPTION 1: Authenticate to Azure and configure the repository with a secret
 
-1. Fork this repository to your own GitHub organization. You need to fork the repository otherwise you will be overwriting code in the main student repository.
-2. Create an Azure Service Principal using the Azure CLI. The Azure Service Principal will be used by the Github Action to install resources into your Azure environment. **NOTE: This step is only needed if you are deploying via Github Actions**
+
+1. Create an Azure Service Principal using the Azure CLI. The Azure Service Principal will be used by the Github Action to install resources into your Azure environment. **NOTE: This step is only needed if you are deploying via Github Actions**
 
 From within Cloud Shell:
 
 ```bash
+# Get the current subscription ID
 subscriptionId=$(az account show --query id --output tsv)
+# Create a service principal named FeatureFlagsSample
 az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor --scopes /subscriptions/$subscriptionId
 ```
 
@@ -51,10 +56,10 @@ az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor
 
 ```json
 {
-  "clientId": "",
-  "clientSecret": "",
-  "subscriptionId": "",
-  "tenantId": "",
+  "clientId": "<your-generated-clientid>",
+  "clientSecret": "<your-generated-clientSecret",
+  "subscriptionId": "<your-Azure-subscriptionId>",
+  "tenantId": "<your-Azure-TenantId>",
   "activeDirectoryEndpointUrl": "https://login.microsoftonline.com/",
   "resourceManagerEndpointUrl": "https://brazilus.management.azure.com",
   "activeDirectoryGraphResourceId": "https://graph.windows.net/",
@@ -64,7 +69,7 @@ az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor
 }
 ```
 
-4. Create a new GitHub secret in your fork of this repository named `AzureSPN`. Paste the JSON returned from the Azure CLI into this new secret. Once you've done this you'll see the secret in your fork of the repository.
+4. Create a new GitHub secret in your forked repository named **`AzureSPN`**. Select **`Settings | Secrets and variables | Actions`** and paste the JSON returned from the previous Azure CLI output into this new secret. Once you've done this you'll see the secret in your fork of the repository.
 
    ![The AzureSPN secret in GitHub](docs/media/secrets.png)
 
@@ -72,15 +77,23 @@ az ad sp create-for-rbac --sdk-auth --name FeatureFlagsSample --role contributor
 
 ## Deploy the code using GitHub Actions
 
-The easiest way to deploy the code is to make a commit directly to the `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. 
+1. You need to make sure your repository is prepared to run workflows. Click on the `Actions` menu item and then select the `I understand my workflows, go ahead and enable them` button. If you do not see this button, your workflows are probably already enabled.
+
+![Providing Workflow permission.](docs/media/workflowok.png)
+
+2. The easiest way to deploy the code is to make a commit directly to your `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button. **TIP: Make sure your resource group name only contains alpha-numeric characters, no hypens or special characters.**
 
 ![Editing the deploy file.](docs/media/edit-button.png)
 
-Provide a custom resource group name for the app, and then commit the change to the 'main' branch. 
+3. Change the name of the branch to `main` and provide a custom resource group name for the app, and then commit the change to the `main` branch. 
 
 ![Pushing a change to the deploy branch to trigger a build.](docs/media/resource-group.png)
 
-Click on the **'Commit Changes'** button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
+4. Scroll farther down in the `deploy.yaml` file to line 48. Change the `'az deployment...'` command line to :
+```bash
+az deployment group create --resource-group ${{ env.RESOURCE_GROUP_NAME }} --template-file './Azure/main.bicep' --debug
+```
+5. Click on the **`Start Commit`** button and then on the **'Commit Changes'** button. Once you do this, click on the `Actions` tab, and you'll see that the deployment CI/CD process has already started. 
 >NOTE: Some users have noticed that the first time they clicked on the Actions tab, they were required to approve that workflows can run. If you see this, the workflow will not run that you just submitted. You need to go back and modify the deploy.yaml file (change resource group name) and commit the changes again.
 
 
@@ -129,11 +142,11 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file main
 Notice that this command create a `deployment` using the Bicep file as a template for what to create in the deployment. The deployment process will take several minutes. Take a break!
 
 ## Did you succeed in deploying the ACA application to Azure?
-The objective of this lab was to deploy the ACA application to Azure. If you are able to click on the `frontend` Azure Container App and see a web page, then you have succeeded. The rest of the lab is just more experimentation with ASP.Net Feature flags and revisioning with ACA.
+The objective of this lab was to deploy the ACA application to Azure. This will take quite a few minutes. If you are able to click on the `frontend` Azure Container App and see a web page, then you have succeeded. The rest of the lab is just more experimentation with ASP.Net Feature flags and revisioning with ACA.
 
 ## Taking a quick look at the source code
 
-This code is the result of the [Add feature flags to an ASP.NET Core](https://docs.microsoft.com/azure/azure-app-configuration/quickstart-feature-flag-aspnet-core?tabs=core6x%2Ccore5x) app article, which goes a bit more in-depth into the features of Azure App Configuration, so do check those resources out for more information later. For now, take note that there's one change in this repository's code from the original sample code. In `BetaController`, the code from the original sample uses the `FeatureGate` attribute to disable a controller's action in the case that the feature is disabled. In this repository's code, that attribute has been commented out. 
+This code (in your repositories FeatureFlagsWithContainerApps folder) is the result of the [Add feature flags to an ASP.NET Core](https://docs.microsoft.com/azure/azure-app-configuration/quickstart-feature-flag-aspnet-core?tabs=core6x%2Ccore5x) app article, which goes a bit more in-depth into the features of Azure App Configuration, so do check those resources out for more information later. For now, take note that there's one change in this repository's code from the original sample code. In `Controllers\BetaController`, the code from the original sample uses the `FeatureGate` attribute to disable a controller's action in the case that the feature is disabled. In this repository's code, that attribute has been commented out to show you a better way of handling this. 
 
 ```csharp
 public class BetaController : Controller
@@ -173,7 +186,7 @@ This razor code will also fire an event each time the beta menu item is shown. T
 
 ### Mapping configuration to feature enablement
 
-We know the .NET code will be deployed as a container artifact, so the best presumption we can make that we'll have to customize the deployment and to enable or disable features is environment variables. Since top-level string variables in `appsettings.json` easily map to environment variables you can set on an Azure Container App using either Bicep, the Azure CLI, Visual Studio, or the Azure Portal, the code has a `RevisionLabel` variable that maps to an Azure App Configuration feature flag. 
+We know the .NET code will be deployed as a container artifact, so the best presumption we can make that we'll have to customize the deployment and to enable or disable features is environment variables. Since top-level string variables in `appsettings.json` easily map to environment variables, you can set these for a Azure Container App using either Bicep, the Azure CLI, Visual Studio, or the Azure Portal. The code below has a `RevisionLabel` variable that maps to an Azure App Configuration feature flag. 
 
 ```json
 {
@@ -214,31 +227,43 @@ Once the application code is deployed, the Azure resource group into which it is
 
 ## Add a revision that enables the Beta feature
 
-From looking at the code, you know that setting the `RevisionLabel` environment variable (or app setting) to `BetaEnabled` results in the beta menu feature being activated. Now, you'll create a new Azure Container App revision, and split traffic between the two revisions so you can track how many requests you have to the new feature once customers are given an opportunity to see the new feature. After the deployment, going to the `frontend` resource in the portal, you'll see 2 revisions, one of which is active. 
+From looking at the code, you know that setting the `RevisionLabel` environment variable (or app setting) to `BetaEnabled` results in the beta menu feature being activated (100% of the time). Now, you'll create a new Azure Container App revision, and split traffic between the two revisions so you can track how many requests you have to the new feature once customers are given an opportunity to see the new feature. After the deployment, going to the `frontend` resource in the portal, you'll see 2 revisions, one of which is active. 
 
 ![Initial revision map.](docs/media/starting-revisions.png)
 
 The one receiving 0% of the traffic is the original image - the ACA Welcome Image - that's deployed when the container apps are first created. You can uncheck that one and save it, resulting in there being 1 active revision. The one receiving 100% of the traffic is our actual app's image. 
 
-Click the `Create new revision` button, and create a new revision. But this time, change the `RevisionLabel` value to be `BetaEnabled` instead of the default. Also, it'd be a good idea to give this new revision a logical suffix name. This way you know this is the one with the feature flag turned `on`. 
+1. Click the `Create new revision` button, and create a new revision. But this time, change the `RevisionLabel` value to be `BetaEnabled` instead of the default. Also, it'd be a good idea to give this new revision a logical suffix name. This way you know this is the one with the feature flag turned `on`. **DON'T** click the `Create` button yet!
 
 ![Create a new revision.](docs/media/create-revision.png)
 
-Click the `Create` button to create the revision. A few moments later it will complete deployment. 
+2. Click the checkbox adjacent to the `frontend` container image name. Then click the Edit button.
+
+![Edit the container.](docs/media/editcontainer.png)
+
+3. Scroll down in the Edit a container window to the very bottom. Change the environment variable `RevisionLabel` value to **`BetaEnabled`** as shown below, then click the **Save** button.
+
+![Edit the container.](docs/media/changevalue.png)
+
+4. Now, click the `Create` button to create the revision. A few moments later the new revision will be created. Make sure to set the revisions to have 50% traffic each. Anytime you make changes in the revision window, make sure you click the **Save** button!
 
 ![New revision.](docs/media/new-revision.png)
 
-Now, about half of the requests to the app result in an additional menu item being displayed. 
+5. In your resource group, click on the container app `frontend`. 
 
 ![Request-by-request variation in the UX.](docs/media/ab-test.png)
 
 ## Monitoring
 
-As site visitors are shown the beta menu item, events are recorded, and when the page resulting on their click is loaded, a separate event is recorded. Since each event is recorded individually by Application Insights. You have a snapshot of the distribution of opportunities to how many successful requests are made as a result of the menu item. 
+1. From your resource group, click on the Application Insights resource.
+2. Click on the `Events` menu item.
+3. Scroll down in the Events window and click on the **View More Insights** button.
+4. Scroll farther down in the window and you will see `Event Statistics`.
+5. As site visitors are shown the beta menu item, events are recorded in Application Insights, and when the page resulting on their click is loaded, a separate event is recorded. Since each event is recorded individually by Application Insights, you have a snapshot of the distribution of opportunities to how many successful requests are made as a result of the menu item. 
 
 ![Default events snapshot.](docs/media/default-snapshot.png)
 
-From the screenshot you'll see how clicking the ellipse results in being able to customize the query. A rather complex Kusto query is shown next, but you can distil the query down to whatever minute level of detail you're after, or even use Kusto's chart-rendering capabilities to show the opportunity-versus-success telemetry for the A/B test. 
+6. From the screenshot you'll see how clicking the ellipse (to the far right of the Event Statistics chart) results in being able to customize the query. A rather complex Kusto query is shown next, but you can distil the query down to whatever minute level of detail you're after, or even use Kusto's chart-rendering capabilities to show the opportunity-versus-success telemetry for the A/B test. 
 
 ![feature-flags-logs](docs/media/feature-flags-logs.png)
 
