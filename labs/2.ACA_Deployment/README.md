@@ -86,7 +86,7 @@ Once you've done this you'll see the secret in your fork of the repository.
 
 4. You need to make sure your repository is prepared to run workflows. Click on the `Actions` menu item and then select the `I understand my workflows, go ahead and enable them` button. If you do not see this button, your workflows are probably already enabled.
 
-![Providing Workflow permission.](docs/media/workflowk.png)
+![Providing Workflow permission.](docs/media/workflowok.png)
 
 5. The easiest way to deploy the code is to make a commit directly to your `main` branch. Navigate to your forked repositories root `.\github\workflows\deploy.yml` file in your browser and clicking the `Edit` button.
 
@@ -253,29 +253,29 @@ From looking at the code, you know that setting the `RevisionLabel` environment 
 
 The one receiving 0% of the traffic is the original image - the ACA Welcome Image - that's deployed when the container apps are first created. You can uncheck that one and save it, resulting in there being 1 active revision. The one receiving 100% of the traffic is our actual app's image. NOTE: If you performed your deployment via Bicep (Option 2), you will only see 1 revision.
 
-- Click the `Create new revision`
+1. Click the `Create new revision`
 
-- Select a revision to base this new revision on (the one that DOESN'T use the `latest` Image tag)
+2. Select a revision to base this new revision on (the one that DOESN'T use the `latest` Image tag)
 
-- Set a `Name / suffix`
+3. Set a `Name / suffix`. It is suggested to use the name **'beta-enabled'** to make it easier to keep track of which revision you are looking at.
 
-- Select the Container Image
+4. Select the Container Image
 
-- Click `Edit`
+5. Click `Edit`
 
 ![Edit the container.](docs/media/editcontainer2.png)
 
-- Scroll to the bottom
+6. Scroll to the bottom
 
 ![Create a new revision.](docs/media/create-revision2.png)
 
-- Change the `RevisionLabel` from _`BetaDisabled`_ to **`BetaEnabled`**
+7. Change the `RevisionLabel` from _`BetaDisabled`_ to **`BetaEnabled`**
 
-- Click the `Save` button
+8. Click the `Save` button
 
 ![Change environment value.](docs/media/changevalue.png)
 
-- Click the `Create` button to create the revision.
+9. Click the `Create` button to create the revision.
 
 ![Deploy new revision.](docs/media/deployNewRevision.png)
 
@@ -287,7 +287,7 @@ Make sure to set the revisions to have 50% traffic each. Anytime you make change
 
 ![New revision.](docs/media/new-revision.png)
 
-5. In your resource group, click on the container app `frontend`.
+10. In your resource group, click on the container app `frontend`. As you continue to refresh the page, you will see the menu items at the top of the page change to show the **Beta** menu.
 
 <!-- ![Request-by-request variation in the UX.](docs/media/ab-test.png) -->
 
