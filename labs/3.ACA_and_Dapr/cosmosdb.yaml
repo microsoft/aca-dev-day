@@ -1,0 +1,13 @@
+componentType: state.azure.cosmosdb
+version: v1
+metadata:
+  - name: url
+    value: #<REPLACE-WITH-URL>
+  - name: masterKey
+    value: #<REPLACE-WITH-MASTER-KEY>
+  - name: database
+    value: ordersDB
+  - name: collection
+    value: orders
+scopes:
+  - order-svc
