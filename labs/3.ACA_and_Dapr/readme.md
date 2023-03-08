@@ -24,14 +24,20 @@ The python-app is a Python flask app that will retrieve and store the state of o
 The go-app is a Go mux app that will retrieve and store the state of inventory. For this sample, the inventory service  just returns back a static value.
 
 ## Setup
-Log into Azure, add the Container Apps extension and finally, register the Container Apps Provider
+1. Log into Azure and open the Cloud Shell. Add the Container Apps extension and finally, register the Container Apps Provider. Note that it may take a few minutes to register the provider.
 ```bash
-az login
+# If you were not using Cloud Shell, you would need to log in to Azure via the Azure CLI
+# az login
+# Set the Azure subscription you are working with if you have more than one
+az account set subscription <your-subscription-id>
 az extension add --name containerapp --upgrade
 az provider register --namespace Microsoft.App
+
+#Change your working folder to the lab folder
+cd aca-dev-day/labs/3.ACA_and_Dapr
 ```
 
-Next, setup the following environment variables
+2. Next, setup the following environment variables
 ```bash
 RG="acadevdays_rg"
 LOCATION="eastus"
@@ -40,7 +46,7 @@ DBNAME="orderDB"
 ```
 
 ## Store API
-Create the Store API microservice and Dapr module
+Create the Store API microservice and Dapr module.
 ![](./content/daprlab-storeapi-1.png)
 
 #### 1. Deploy API Service
@@ -75,7 +81,7 @@ az containerapp ingress enable \
 ```
 
 ## Inventory Service
-Create the Inventory microservice and Dapr module
+Create the Inventory microservice and Dapr module.
 ![](./content/daprlab-inventory.png)
 
 #### 1. Deploy Inventory Service
@@ -89,7 +95,7 @@ az containerapp up \
   --ingress internal
 ```
 
-2. Enable Dapr
+####2. Enable Dapr
 ```bash
 az containerapp dapr enable \
     -n inventory-svc \
@@ -104,14 +110,15 @@ With the environment deployed, the next step is to deploy an Azure Cosmos Databa
 ![](./content/daprlab-cosmos.png)
 
 #### 1. Create Cosmos DB Account 
+Take note in the new few commands that you need to provide  **your initials** for the CosmosDB account name.
 ```bash
-az cosmosdb create --name ordersaccount --resource-group $RG 
+az cosmosdb create --name ordersaccount-<your-initials> --resource-group $RG 
 ```
 
 #### 2. Create a database of type SQL API 
 ```bash
 az cosmosdb sql database create \
---account-name ordersaccount \
+--account-name ordersaccount-<your-initials> \
 --resource-group $RG \
 --name ordersDB
 ```
@@ -119,7 +126,7 @@ az cosmosdb sql database create \
 #### 3. Create orders collection
 ```bash
 az cosmosdb sql container create \
---account-name ordersaccount \
+--account-name ordersaccount-<your-initials> \
 --resource-group $RG \
 --database-name ordersDB \
 --name orders \
@@ -128,20 +135,20 @@ az cosmosdb sql container create \
 ```
 
 ## Deploy Dapr Component for CosmosDB
-Next, create a State Management Dapr component that will be used by the Orders Microservice to store information about processed orders. 
+Next, create a State Management Dapr component that will be used by the Orders microservice to store information about processed orders. 
 
 ### Create the Dapr storage component
 
 #### 1. Get the URL parameter. 
-> Save this information, well need it to update the YAML file 
+> Save this information, you'll need it to update the YAML file 
 ```bash
-az cosmosdb show -n ordersaccount -g $RG --query documentEndpoint -o tsv
+az cosmosdb show -n ordersaccount-<your-initials> -g $RG --query documentEndpoint -o tsv
 ```
 
 #### 2. Get the Cosmos Database  Key.  
-> Save this information, well need it to update the YAML file 
+> Save this information, you'll need it to update the YAML file 
 ```bash
-az cosmosdb keys list -n ordersaccount -g $RG --query primaryMasterKey -o tsv
+az cosmosdb keys list -n ordersaccount-<your-initials> -g $RG --query primaryMasterKey -o tsv
 ```
 #### 3. Update the Dapr component YAML file 
 ```bash
@@ -163,9 +170,11 @@ scopes:
   - order-svc
 ```
 
-Replace ```#<REPLACE-WITH-URL>``` with the output from step 1 above
+a. Replace ```#<REPLACE-WITH-URL>``` with the output from step 1 above.
 
-Replace ```#<REPLACE-WITH-MASTER-KEY>``` with the output from step 2 above
+b. Replace ```#<REPLACE-WITH-MASTER-KEY>``` with the output from step 2 above.
+
+c. Save the file and close the editor.
 
 
 #### 4. Deploy docker component 
