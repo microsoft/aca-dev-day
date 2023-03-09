@@ -129,7 +129,7 @@ az containerapp dapr enable \
     --dapr-app-id inventory-svc \
     --dapr-app-port 8050
 ```
-## 3. Verify
+#### 3. Verify
 Verify the Inventory microservice is deployed correctly and the ***store-api*** can communicate with it. 
 
 In the Container Apps Demo web page, enter **any text** for the **id** in the "***View Inventory Status***" section, then press the "***View***" button. The result should be a message indicating the inventory is in stock
@@ -257,7 +257,7 @@ echo https://$(az containerapp show -n store-api -g $RG --query properties.confi
 ![](./content/daprlab-orders-tst.png)
 
   #### Container Apps Demo
-  1. Enter an Oder ID of "123"
+  1. Enter an Order ID of "123"
   2. Enter an inventory Item of "Widget"
   3. Press the "Create" button. 
   4. The browser should display the "Order Created" message and the order data. 
