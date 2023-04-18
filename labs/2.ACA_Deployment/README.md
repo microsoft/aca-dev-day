@@ -36,7 +36,7 @@ By the end of this lab you'll have a single container app that has two revisions
 
 > Note: Remember to clean up or scale back your resources to save on compute costs.
 
-1. Fork this repository (https://github.com/Azure-Samples/dotNET-Frontend-AB-Testing-on-Azure-Container-Apps) to your own GitHub organization. You will notice that when you fork the repo, the repo has some lab instructions. Please make sure you use THESE lab instructions instead. The lab instructions you are reading now has more notes, corrections and explainations.
+1. Fork this repository (https://github.com/Azure-Samples/dotNET-Frontend-AB-Testing-on-Azure-Container-Apps) to your own GitHub organization. You will notice that when you fork the repo, the repo has some lab instructions. Please make sure you use THESE lab instructions instead. The lab instructions you are reading now has more notes, corrections and explanations.
 
 ## OPTION 1: Deploy via GitHub Actions
 
