@@ -148,11 +148,13 @@ az group create \
   --location $LOCATION
 ```
 
-5. Open the file `container_app.bicep` using the Cloud Shell editor.
+5. Change to the ./Azure folder.
 
-6. On line 4, change the repositoryImage value to `'lwazuredocker/frontend:v1'`. Save the file in the editor and close the file.
+6. Open the file `container_app.bicep` using the Cloud Shell editor.
 
-7. Once you have confirmed that the resource group has been created in (via the Azure Portal), run this command in the Cloud Shell prompt.
+7. On line 4, change the repositoryImage value to `'lwazuredocker/frontend:v1'`. Save the file in the editor and close the file.
+
+8. Once you have confirmed that the resource group has been created in (via the Azure Portal), run this command in the Cloud Shell prompt.
 
 ```bash
 az deployment group create --resource-group $RESOURCE_GROUP --template-file main.bicep
