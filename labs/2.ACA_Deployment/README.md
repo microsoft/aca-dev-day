@@ -61,8 +61,8 @@ By the end of this lab you'll have a single container app that has two revisions
 
     ```json
     {
-      "clientId": "<your-generated-clientid>",
-      "clientSecret": "<your-generated-clientSecret",
+      "clientId": "<your-generated-applicationId>",
+      "clientSecret": "<your-generated-clientSecret>",
       "subscriptionId": "<your-Azure-subscriptionId>",
       "tenantId": "<your-Azure-TenantId>",
       "activeDirectoryEndpointUrl": "https://login.microsoftonline.com/",
