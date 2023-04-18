@@ -92,7 +92,7 @@ Once you've done this you'll see the secret in your fork of the repository.
 
 ![Editing the deploy file.](docs/media/edit-button.png)
 
-6. Change the name of the branch to **`main`** and provide a custom resource group name for the app, and then commit the change to the `main` branch. **TIP: Make sure your resource group name only has alpha numeric characters**
+6. Change the name of the branch to **`main`** and provide a custom resource group name for the app, and then commit the change to the `main` branch. **TIP: Make sure your resource group name has only alpha numeric characters and 14 characters max** because its name will be used as the name of all resources, like an ACR and few other resources with more restrictive name constraints.
 
 ![Pushing a change to the deploy branch to trigger a build.](docs/media/resource-group.png)
 
